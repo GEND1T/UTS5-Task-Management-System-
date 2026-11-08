@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn, type Relation } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity.js';
 import { ProjectEntity } from '../../projects/entities/project.entity.js';
 import { TaskAssignmentEntity } from './task-assignment.entity.js';
@@ -43,8 +43,8 @@ export class TaskEntity extends BaseEntity {
 
   @ManyToOne(() => ProjectEntity, (project) => project.tasks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'project_id' })
-  project: ProjectEntity;
+  project: Relation<ProjectEntity>;
 
   @OneToMany(() => TaskAssignmentEntity, (assignment) => assignment.task)
-  assignments: TaskAssignmentEntity[];
+  assignments: Relation<TaskAssignmentEntity[]>;
 }

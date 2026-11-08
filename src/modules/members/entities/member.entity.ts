@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn, type Relation } from 'typeorm';
 import { TeamEntity } from '../../teams/entities/team.entity.js';
 import { BaseEntity } from '../../../common/entities/base.entity.js';
 import { TaskAssignmentEntity } from '../../tasks/entities/task-assignment.entity.js';
@@ -29,8 +29,8 @@ export class MemberEntity extends BaseEntity {
 
   @ManyToOne(() => TeamEntity, (team) => team.members, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'team_id' })
-  team: TeamEntity;
+  team: Relation<TeamEntity>;
 
   @OneToMany(() => TaskAssignmentEntity, (assignment) => assignment.member)
-  assignments: TaskAssignmentEntity[];
+  assignments: Relation<TaskAssignmentEntity[]>;
 }

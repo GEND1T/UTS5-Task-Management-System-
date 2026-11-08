@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Unique, type Relation } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity.js';
 import { TaskEntity } from './task.entity.js';
 import { MemberEntity } from '../../members/entities/member.entity.js';
@@ -17,9 +17,9 @@ export class TaskAssignmentEntity extends BaseEntity {
 
   @ManyToOne(() => TaskEntity, (task) => task.assignments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'task_id' })
-  task: TaskEntity;
+  task: Relation<TaskEntity>;
 
   @ManyToOne(() => MemberEntity, (member) => member.assignments, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'member_id' })
-  member: MemberEntity;
+  member: Relation<MemberEntity>;
 }
