@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { TeamEntity } from '../../teams/entities/team.entity.js';
 import { BaseEntity } from '../../../common/entities/base.entity.js';
-// import { TaskAssignmentEntity } from '../../tasks/entities/task-assignment.entity';
+import { TaskAssignmentEntity } from '../../tasks/entities/task-assignment.entity.js';
 
 export enum MemberRole {
   LEAD = 'LEAD',
@@ -31,6 +31,6 @@ export class MemberEntity extends BaseEntity {
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 
-//   @OneToMany(() => TaskAssignmentEntity, (assignment) => assignment.member)
-//   assignments: TaskAssignmentEntity[];
+  @OneToMany(() => TaskAssignmentEntity, (assignment) => assignment.member)
+  assignments: TaskAssignmentEntity[];
 }
