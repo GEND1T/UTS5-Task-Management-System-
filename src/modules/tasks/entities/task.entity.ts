@@ -45,7 +45,6 @@ export class TaskEntity extends BaseEntity {
   @JoinColumn({ name: 'project_id' })
   project: ProjectEntity;
 
-  //Satu tugas memiliki banyak penugasan; jika tugas dihapus, data penugasannya ikut terhapus.
   @OneToMany(() => TaskAssignmentEntity, (assignment) => assignment.task)
   assignments: TaskAssignmentEntity[];
 }

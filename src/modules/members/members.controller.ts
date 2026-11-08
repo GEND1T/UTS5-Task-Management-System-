@@ -1,4 +1,6 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post, Patch, Param, Body, ParseUUIDPipe } from '@nestjs/common';
+import { MembersService } from './members.service.js';
+import { CreateMemberDto } from './dto/create-member.dto.js';
 
 @Controller('members')
 export class MembersController {
