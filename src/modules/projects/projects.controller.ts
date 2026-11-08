@@ -11,8 +11,8 @@ export class ProjectsController {
     return this.projectsService.create(dto);
   }
 
-//   @Get(':id')
-//   findOne(@Param('id', ParseUUIDPipe) id: string) {
-//     return this.projectsService.findOne(id);
-//   }
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.projectsService.findOne(id);
+  }
 }
