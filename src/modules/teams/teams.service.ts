@@ -1,4 +1,3 @@
-// src/modules/teams/teams.service.ts
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,12 +18,14 @@ export class TeamsService {
     return this.teamRepo.save(team);
   }
 
-//   async findOneWithRelations(id: string): Promise<TeamEntity> {
-//     const team = await this.teamRepo.findOne({
-//       where: { id },
-//       relations: ['members', 'projects'],
-//     });
-//     if (!team) throw new NotFoundException('Tim tidak ditemukan.');
-//     return team;
-//   }
+  async findOneWithRelations(id: string): Promise<TeamEntity> {
+    const team = await this.teamRepo.findOne({
+      where: { id },
+      relations: {
+        members: true,
+        projects: true},
+    });
+    if (!team) throw new NotFoundException('Tim tidak ditemukan.');
+    return team;
+  }
 }
