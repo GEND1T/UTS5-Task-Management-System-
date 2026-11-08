@@ -15,6 +15,6 @@ export class TeamEntity extends BaseEntity {
   @OneToMany(() => MemberEntity, (member) => member.team)
   members: MemberEntity[];
 
-//   @OneToMany(() => ProjectEntity, (project) => project.team)
-//   projects: ProjectEntity[];
+  @OneToMany(() => ProjectEntity, (project) => project.team)
+  projects: ProjectEntity[];
 }
