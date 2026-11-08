@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+// src/modules/members/members.service.ts
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { MemberEntity } from './entities/member.entity.js';
+import { TeamsService } from '../teams/teams.service.js';
+import { CreateMemberDto } from './dto/create-member.dto.js';
 
 @Injectable()
 export class MembersService {
