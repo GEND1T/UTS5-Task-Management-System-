@@ -2,20 +2,20 @@ import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } 
 import { MemberRole } from '../entities/member.entity.js';
 
 export class CreateMemberDto {
-  @IsUUID()
-  @IsNotEmpty()
+  @IsUUID(undefined, { message: 'ID tim harus berupa UUID yang valid.' })
+  @IsNotEmpty({ message: 'ID tim wajib diisi.' })
   teamId: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
+  @IsString({ message: 'Nama harus berupa teks.' })
+  @IsNotEmpty({ message: 'Nama wajib diisi.' })
+  @MaxLength(100, { message: 'Nama tidak boleh lebih dari 100 karakter.' })
   name: string;
 
-  @IsEmail()
-  @IsNotEmpty()
+  @IsEmail({}, { message: 'Alamat email harus valid.' })
+  @IsNotEmpty({ message: 'Alamat email wajib diisi.' })
   email: string;
 
-  @IsEnum(MemberRole)
+  @IsEnum(MemberRole, { message: 'Peran anggota tidak valid.' })
   @IsOptional()
   role?: MemberRole;
 }
