@@ -6,12 +6,12 @@ export class CreateMemberDto {
   @IsNotEmpty({ message: 'ID tim wajib diisi.' })
   teamId: string;
 
-  @IsString({ message: 'Nama anggota harus berupa teks.' })
-  @IsNotEmpty({ message: 'Nama anggota wajib diisi.' })
-  @MaxLength(100, { message: 'Nama anggota tidak boleh lebih dari 100 karakter.' })
+  @IsString({ message: 'Nama harus berupa teks.' })
+  @IsNotEmpty({ message: 'Nama wajib diisi.' })
+  @MaxLength(100, { message: 'Nama tidak boleh lebih dari 100 karakter.' })
   name: string;
 
-  @IsEmail({}, { message: 'Alamat email tidak valid.' })
+  @IsEmail({}, { message: 'Alamat email harus valid.' })
   @IsNotEmpty({ message: 'Alamat email wajib diisi.' })
   email: string;
 
