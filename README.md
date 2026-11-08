@@ -31,6 +31,20 @@
 $ npm install
 ```
 
+## Database configuration
+
+The application uses PostgreSQL. Set these environment variables before starting it:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=your_postgres_user
+DB_PASSWORD=your_postgres_password
+DB_DATABASE=task_management
+```
+
+The database must already exist and its schema must be managed separately; automatic schema synchronization is disabled.
+
 ## Compile and run the project
 
 ```bash
