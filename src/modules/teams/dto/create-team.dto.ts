@@ -1,4 +1,3 @@
-// src/modules/teams/dto/create-team.dto.ts
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateTeamDto {
