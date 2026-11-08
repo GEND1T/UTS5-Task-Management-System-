@@ -10,6 +10,9 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true, // Otomatis mengubah string ke number/boolean jika tipe di DTO number/boolean
+      },
     }),
   );
   await app.listen(3000);
