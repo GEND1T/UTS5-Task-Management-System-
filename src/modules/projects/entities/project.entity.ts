@@ -1,9 +1,7 @@
 import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity.js';
 import { TeamEntity } from '../../teams/entities/team.entity.js';
-// import { BaseEntity } from '../../../common/entities/base.entity';
-// import { TeamEntity } from '../../teams/entities/team.entity';
-// import { TaskEntity } from '../../tasks/entities/task.entity';
+import { TaskEntity } from '../../tasks/entities/task.entity.js';
 
 export enum ProjectStatus {
   PLANNED = 'PLANNED',
@@ -36,6 +34,6 @@ export class ProjectEntity extends BaseEntity {
   @JoinColumn({ name: 'team_id' })
   team: TeamEntity;
 
-//   @OneToMany(() => BaseEntity, (task) => task.project)
-//   tasks: TaskEntity[];
+  @OneToMany(() => TaskEntity, (task) => task.project)
+  tasks: TaskEntity[];
 }

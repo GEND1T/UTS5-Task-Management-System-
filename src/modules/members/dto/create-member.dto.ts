@@ -1,8 +1,6 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { MemberRole } from '../entities/member.entity.js';
 
-
-
 export class CreateMemberDto {
   @IsUUID()
   @IsNotEmpty()

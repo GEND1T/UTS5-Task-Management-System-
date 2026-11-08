@@ -6,10 +6,10 @@ import { CreateMemberDto } from './dto/create-member.dto.js';
 export class MembersController {
   constructor(private readonly membersService: MembersService) {}
 
-//   @Post()
-//   create(@Body() dto: CreateMemberDto) {
-//     return this.membersService.create(dto);
-//   }
+  @Post()
+  create(@Body() dto: CreateMemberDto) {
+    return this.membersService.create(dto);
+  }
 
   @Patch(':id/status')
   updateStatus(

@@ -12,13 +12,6 @@ import { MemberEntity } from '../members/entities/member.entity.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { AssignMembersDto } from './dto/assign-members.dto.js';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto.js';
-// import { TaskEntity, TaskStatus } from './entities/task.entity';
-// import { TaskAssignmentEntity } from './entities/task-assignment.entity';
-// import { ProjectEntity, ProjectStatus } from '../projects/entities/project.entity';
-// import { MemberEntity } from '../members/entities/member.entity';
-// import { CreateTaskDto } from './dto/create-task.dto';
-// import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
-// import { AssignMembersDto } from './dto/assign-members.dto';
 
 @Injectable()
 export class TasksService {
