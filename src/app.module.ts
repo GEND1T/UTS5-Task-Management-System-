@@ -14,6 +14,10 @@ import { TasksModule } from './modules/tasks/tasks.module.js';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
+        PORT: Joi.number().default(3000),
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test')
+          .default('development'),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.number().port().default(5432),
         DB_USERNAME: Joi.string().required(),
@@ -31,7 +35,8 @@ import { TasksModule } from './modules/tasks/tasks.module.js';
         password: config.getOrThrow<string>('DB_PASSWORD'),
         database: config.getOrThrow<string>('DB_DATABASE'),
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: config.get<string>('NODE_ENV') === 'development',
+
       }),
     }),
     TeamsModule,

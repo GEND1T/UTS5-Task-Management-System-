@@ -1,0 +1,210 @@
+### ============================================================================
+### KONFIGURASI VARIABEL & ID STATIS DARI SEEDER
+### ============================================================================
+@baseUrl = http://localhost:3000/api
+
+@teamAlphaId = 11111111-1111-4111-8111-111111111101
+@teamBetaId = 11111111-1111-4111-8111-111111111102
+@teamEmptyId = 11111111-1111-4111-8111-111111111103
+
+@memberAlphaLeadId = 22222222-2222-4222-8222-222222222201
+@memberAlphaDevId = 22222222-2222-4222-8222-222222222202
+@memberAlphaInactiveId = 22222222-2222-4222-8222-222222222203
+@memberBetaDevId = 22222222-2222-4222-8222-222222222204
+@memberAlphaUnassignedId = 22222222-2222-4222-8222-222222222205
+
+@projectActiveId = 33333333-3333-4333-8333-333333333301
+@projectCompletedId = 33333333-3333-4333-8333-333333333302
+@projectPlannedId = 33333333-3333-4333-8333-333333333303
+
+@taskInProgressId = 44444444-4444-4444-8444-444444444401
+@taskTodoId = 44444444-4444-4444-8444-444444444402
+@taskDoneId = 44444444-4444-4444-8444-444444444403
+
+
+### ============================================================================
+### BAGIAN 1: SKENARIO POSITIF (OPERASI CRUD & 5 FITUR UTAMA)
+### ============================================================================
+
+### 1.1 Ambil Semua Tim beserta Anggota & Proyeknya
+GET {{baseUrl}}/teams
+Accept: application/json
+
+### 1.2 Ambil Detail Tim Alpha
+GET {{baseUrl}}/teams/{{teamAlphaId}}
+Accept: application/json
+
+### 1.3 Update Deskripsi Tim Alpha
+PATCH {{baseUrl}}/teams/{{teamAlphaId}}
+Content-Type: application/json
+
+{
+  "description": "Tim inti pengembang arsitektur backend dan mikroservis"
+}
+
+### 1.4 Ambil Daftar Anggota Aktif di Tim Alpha (Filter Query)
+GET {{baseUrl}}/members?teamId={{teamAlphaId}}&isActive=true
+Accept: application/json
+
+### 1.5 Ambil Detail Proyek Aktif beserta Daftar Tugasnya
+GET {{baseUrl}}/projects/{{projectActiveId}}
+Accept: application/json
+
+### 1.6 Buat Tugas Baru di Proyek Aktif (Fitur 2 & 3)
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "projectId": "{{projectActiveId}}",
+  "title": "Integrasi Pengujian Otomatis E2E",
+  "description": "Menyiapkan skenario pengujian endpoint dengan REST Client",
+  "priority": "HIGH",
+  "dueDate": "2026-12-15T17:00:00.000Z"
+}
+
+### 1.7 Tugaskan Beberapa Anggota Sekaligus ke Tugas TODO (Fitur 4)
+POST {{baseUrl}}/tasks/{{taskTodoId}}/assignments
+Content-Type: application/json
+
+{
+  "memberIds": [
+    "{{memberAlphaLeadId}}",
+    "{{memberAlphaDevId}}"
+  ],
+  "notes": "Kolaborasi penulisan spesifikasi endpoint dan skema respons"
+}
+
+### 1.8 Perbarui Catatan Penugasan Anggota Tertentu
+PATCH {{baseUrl}}/tasks/{{taskTodoId}}/assignments/{{memberAlphaDevId}}
+Content-Type: application/json
+
+{
+  "notes": "Fokus pada penyusunan contoh payload JSON dan kode status HTTP"
+}
+
+### 1.9 Ubah Status Tugas dari TODO ke IN_PROGRESS setelah Memiliki Anggota (Fitur 3)
+PATCH {{baseUrl}}/tasks/{{taskTodoId}}/status
+Content-Type: application/json
+
+{
+  "status": "IN_PROGRESS"
+}
+
+### 1.10 Tampilkan Detail Tugas beserta Daftar Anggota yang Ditugaskan (Fitur 5)
+GET {{baseUrl}}/tasks/{{taskTodoId}}
+Accept: application/json
+
+
+### ============================================================================
+### BAGIAN 2: SKENARIO NEGATIF & EDGE CASES (VALIDASI ATURAN BISNIS)
+### ============================================================================
+
+### 2.1 [EDGE CASE - LINTAS TIM] Tugaskan Anggota Tim Beta ke Proyek Tim Alpha
+# Ekspektasi: 400 Bad Request (Anggota bukan bagian dari tim pemilik proyek)
+POST {{baseUrl}}/tasks/{{taskInProgressId}}/assignments
+Content-Type: application/json
+
+{
+  "memberIds": ["{{memberBetaDevId}}"]
+}
+
+### 2.2 [EDGE CASE - ANGGOTA NONAKTIF] Tugaskan Anggota Nonaktif ke Tugas
+# Ekspektasi: 400 Bad Request (Anggota sedang berstatus nonaktif)
+POST {{baseUrl}}/tasks/{{taskInProgressId}}/assignments
+Content-Type: application/json
+
+{
+  "memberIds": ["{{memberAlphaInactiveId}}"]
+}
+
+### 2.3 [EDGE CASE - ANGGOTA TERAKHIR] Cabut Satu-satunya Anggota pada Tugas IN_PROGRESS
+# Ekspektasi: 400 Bad Request (Tidak dapat mencabut anggota terakhir saat tugas berjalan)
+DELETE {{baseUrl}}/tasks/{{taskInProgressId}}/assignments/{{memberAlphaLeadId}}
+
+### 2.4 [EDGE CASE - NONAKTIFKAN ANGGOTA TERAKHIR] Nonaktifkan Anggota Tunggal di Tugas Aktif
+# Ekspektasi: 400 Bad Request (Merupakan satu-satunya penanggung jawab pada tugas aktif)
+PATCH {{baseUrl}}/members/{{memberAlphaLeadId}}/status
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+### 2.5 [EDGE CASE - STATE MACHINE] Lompat Status dari IN_PROGRESS Langsung ke DONE
+# Ekspektasi: 400 Bad Request (Transisi dari IN_PROGRESS ke DONE tidak diizinkan, harus lewat IN_REVIEW)
+PATCH {{baseUrl}}/tasks/{{taskInProgressId}}/status
+Content-Type: application/json
+
+{
+  "status": "DONE"
+}
+
+### 2.6 [EDGE CASE - TUGAS TERKUNCI] Ubah Judul atau Penugasan pada Tugas Berstatus DONE
+# Ekspektasi: 400 Bad Request (Detail tugas tidak dapat diubah karena status sudah DONE)
+PATCH {{baseUrl}}/tasks/{{taskDoneId}}
+Content-Type: application/json
+
+{
+  "title": "Judul Baru pada Tugas Selesai"
+}
+
+### 2.7 [EDGE CASE - RENTANG TENGGAT WAKTU] Buat Tugas dengan Due Date di Luar Tanggal Proyek
+# Proyek aktif berakhir pada 2026-12-31. Ekspektasi: 400 Bad Request
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "projectId": "{{projectActiveId}}",
+  "title": "Tugas Melebihi Jadwal Proyek",
+  "priority": "LOW",
+  "dueDate": "2027-02-10T17:00:00.000Z"
+}
+
+### 2.8 [EDGE CASE - PENYEMPITAN TANGGAL PROYEK] Majukan End Date Proyek mendahului Due Date Tugas
+# Tugas di dalamnya memiliki dueDate 25 Nov & 10 Des 2026. Ekspektasi: 400 Bad Request
+PATCH {{baseUrl}}/projects/{{projectActiveId}}
+Content-Type: application/json
+
+{
+  "endDate": "2026-11-10"
+}
+
+### 2.9 [EDGE CASE - PENUTUPAN PROYEK PREMATUR] Ubah Proyek ke COMPLETED saat Tugas Belum Selesai
+# Ekspektasi: 400 Bad Request (Masih terdapat tugas yang belum DONE/CANCELLED)
+PATCH {{baseUrl}}/projects/{{projectActiveId}}
+Content-Type: application/json
+
+{
+  "status": "COMPLETED"
+}
+
+### 2.10 [EDGE CASE - KUNCI FOREIGN KEY] Coba Pindahkan Proyek ke Tim Lain via PATCH
+# Ekspektasi: 400 Bad Request (property teamId should not exist karena diblokir OmitType)
+PATCH {{baseUrl}}/projects/{{projectActiveId}}
+Content-Type: application/json
+
+{
+  "teamId": "{{teamBetaId}}"
+}
+
+### 2.11 [EDGE CASE - RESTRICT DELETE TIM] Hapus Tim Alpha yang Masih Memiliki Proyek & Anggota
+# Ekspektasi: 409 Conflict (Tidak dapat dihapus karena masih memiliki anggota dan proyek)
+DELETE {{baseUrl}}/teams/{{teamAlphaId}}
+
+### 2.12 [EDGE CASE - RESTRICT DELETE ANGGOTA] Hapus Anggota yang Memiliki Riwayat Penugasan
+# Ekspektasi: 409 Conflict (Memiliki riwayat penugasan, arahkan ke soft-disable)
+DELETE {{baseUrl}}/members/{{memberAlphaLeadId}}
+
+
+### ============================================================================
+### BAGIAN 3: SKENARIO PENGHAPUSAN VALID (CLEAN DELETE)
+### ============================================================================
+
+### 3.1 Hapus Anggota yang Belum Pernah Ditugaskan (Berhasil 200 OK)
+DELETE {{baseUrl}}/members/{{memberAlphaUnassignedId}}
+
+### 3.2 Hapus Proyek Berstatus PLANNED yang Belum Memiliki Tugas Aktif (Berhasil 200 OK)
+DELETE {{baseUrl}}/projects/{{projectPlannedId}}
+
+### 3.3 Hapus Tim Cadangan yang Kosong Tanpa Anggota & Proyek (Berhasil 200 OK)
+DELETE {{baseUrl}}/teams/{{teamEmptyId}}

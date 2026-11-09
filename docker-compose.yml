@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: uts_task_management_pg
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -11,6 +11,16 @@ services:
       - "${DB_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  pgadmin: # <-- Tambahkan service ini
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mail.com
+      PGADMIN_DEFAULT_PASSWORD: adminpassword
+    ports:
+      - "8080:80" # Anda bisa buka di browser lewat localhost:8080
+    depends_on:
+      - postgres
 
 volumes:
   pgdata:
